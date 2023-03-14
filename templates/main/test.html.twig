@@ -1,0 +1,13 @@
+
+
+{% extends 'base.html.twig' %}
+{% block title %}{{ parent() }} | Home{% endblock %}
+
+{% block body %}
+    <h1>Mon Test</h1>
+
+    <h3>{{ monFilm.titre }} et mon autre variable = {{ autreVariable }}</h3>
+
+
+    <div>{{ monFilm.titre |raw }}</div>
+{% endblock %}

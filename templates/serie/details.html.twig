@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ serie.name }} | {{ parent() }}
+{% endblock %}
+
+
+{% block body %}
+
+    todo: titre de la série + les autres attributs
+    <h2>{{ serie.name }}</h2>
+
+      <div>{{ serie.overview }}</div>
+      <div> {{ serie.vote }}</div>
+      <div>{{ serie.genre }} </div>
+      <div>{{ serie.status }}</div>
+      <div>{{ serie.popularity }}</div>
+      <div>{{ serie.vote }}</div>
+
+
+
+
+{% endblock %}

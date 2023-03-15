@@ -115,7 +115,7 @@ private ?\DateTimeInterface $firstAirDate = null;
     public function getDateCreated(): ?\DateTimeInterface    {
         return $this->dateCreated;    }
 
-    public function setDateCreated(\DateTimeInterface $dateCreated): self    {
+    public function setDateCreated(?\DateTimeInterface $dateCreated): self    {
         $this->dateCreated = $dateCreated;
         return $this;    }
 

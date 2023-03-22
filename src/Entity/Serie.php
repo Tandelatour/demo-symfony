@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\SerieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 
@@ -16,16 +19,30 @@ class Serie{
     private ?int $id = null;
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    /**
+     * @Assert\NotBlank(message="Please provide a title")
+     * @Assert\Length(min="2", max="255",
+     *                  minMessage="length of title is too short", maxMessage="length of title is too long")
+     *
+     */
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $overview = null;
+
+    #[Assert\Choice(choices: ['Cancelled','Ended','Returning'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
+
+    #[Assert\Range(min: 0,max: 10, notInRangeMessage: 'you are not in range' )]
     #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: 1)]
     private ?string $vote = null;
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
     private ?string $popularity = null;
     #[ORM\Column(length: 255)]
 private ?string $genre = null;
+
+
     #[ORM\Column(type: Types::DATE_MUTABLE)]
 private ?\DateTimeInterface $firstAirDate = null;
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -40,6 +57,14 @@ private ?\DateTimeInterface $firstAirDate = null;
     private ?\DateTimeInterface $dateCreated = null;
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateModified = null;
+
+    #[ORM\OneToMany(mappedBy: 'serie', targetEntity: Season::class, orphanRemoval: true)]
+    private Collection $seasons;
+
+    public function __construct()
+    {
+        $this->seasons = new ArrayCollection();
+    }
     public function getId(): ?int{
         return $this->id;    }
 
@@ -124,6 +149,36 @@ private ?\DateTimeInterface $firstAirDate = null;
 
     public function setDateModified(?\DateTimeInterface $dateModified): self    {
         $this->dateModified = $dateModified;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Season>
+     */
+    public function getSeasons(): Collection
+    {
+        return $this->seasons;
+    }
+
+    public function addSeason(Season $season): self
+    {
+        if (!$this->seasons->contains($season)) {
+            $this->seasons->add($season);
+            $season->setSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeason(Season $season): self
+    {
+        if ($this->seasons->removeElement($season)) {
+            // set the owning side to null (unless already changed)
+            if ($season->getSerie() === $this) {
+                $season->setSerie(null);
+            }
+        }
+
         return $this;
     }
 }

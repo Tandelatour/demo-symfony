@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Serie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -38,6 +39,46 @@ class SerieRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+
+//    public function findBestSeries(){
+//            //recherche des meilleur serie avec commande DQL
+//        $entityManager = $this->getEntityManager();
+//
+//        $dql = "SELECT s FROM App\Entity\Serie s
+//                WHERE s.popularity > 100
+//                AND s.vote > 8
+//                ORDER BY s.popularity DESC ";
+//
+//        $query = $entityManager->createQuery($dql);
+//
+//        $query->setMaxResults(30);
+//        $result = $query->getResult();
+//
+//        return $result;
+//
+//    }
+
+    public function  findBestSeries(){
+        //avec queryBuilder
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->leftJoin('s.seasons', 'seas');//left join pour recuperer série sans saison  (si juste ça = 6 saison)
+        $queryBuilder->addSelect('seas'); //o lui indique qu'on veut tout ce qui concerne les saisons
+        $queryBuilder->andWhere('s.popularity > 100');
+        $queryBuilder->andWhere('s.vote > 8');
+        $queryBuilder->addOrderBy('s.popularity','DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->setMaxResults(30);
+
+        $paginator = new Paginator($query);
+
+        return $paginator;
+    }
+
+
+
+
 
 //    /**
 //     * @return Serie[] Returns an array of Serie objects

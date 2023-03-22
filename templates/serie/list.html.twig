@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | todo:titre de la serie
+    {{ parent() }} | List
 {% endblock %}
 
 {% block body %}
@@ -10,7 +10,7 @@
     <section class="series-list">
         {% for serie in series %}
             <article>
-                <a href="{{ path('series_details',{'id' : serie.id()}) }}">
+                <a href="{{ path('series_details',{'id' : serie.id()}) }}" title="{{ serie.seasons | length }} season{{ serie.seasons | length > 1 ? 's' : '' }}">
                     <img src="{{ asset('img/posters/series/'~serie.poster) }}" alt="{{ serie.name }}">
                 </a>
 

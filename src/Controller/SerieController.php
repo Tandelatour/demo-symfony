@@ -70,6 +70,26 @@ public function create(Request $request, EntityManagerInterface $entityManager):
     ]);
 
 }
+
+    #[Route('/delete/{id}', name: 'delete')]
+    public function delete($id, SerieRepository $serieRepository, EntityManagerInterface $entityManager, Request $request): Response{
+//aller chercher la série en BDD
+        $serie = $serieRepository->find($id);
+        if($this->isCsrfTokenValid('delete'.$id, $request->get('_token'))){
+//suppression de toutes les saisons de le série
+            foreach ($serie->getSeasons() as $season){
+                $entityManager->remove($season);
+            }
+//suppression de la série
+            $entityManager->remove($serie);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('series_liste');
+    }
+
+
+
     #[Route('/demo',name:"demo")]
 public function demo(EntityManagerInterface $entityManager){
         $serie = new Serie();
@@ -103,21 +123,6 @@ public function demo(EntityManagerInterface $entityManager){
         return $this->render('serie/create.html.twig');
 }
 
-
-    #[Route('/delete/{id}', name: "serie_delete")]
-    public function delete(int $id, SerieRepository $serieRepository, EntityManagerInterface $entityManager):Response{
-
-        $serie = $serieRepository->find($id);
-
-        $entityManager->remove($serie);
-        $entityManager->flush();
-
-
-
-        return $this->render('serie/list.html.twig');
-
-
-    }
 
 #[Route('season/dissociate',name: 'season_dissociate')]
 public function dissociateSeasonWithSerie(SeasonRepository $seasonRepository){

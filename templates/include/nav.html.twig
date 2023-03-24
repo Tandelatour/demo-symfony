@@ -4,7 +4,17 @@
         <li><a href="{{path('main_home') }}" title="Home">Home</a></li>
         <li><a href="{{path('main_test')}}" title="">Test</a></li>
         <li><a href="{{path('series_liste')}}" title="">Serie</a></li>
+        {% if app.user %}
+
         <li><a href="{{path('series_create')}}" title="">Creation Série</a></li>
         <li><a href="{{path('season_create')}}" title="">Creation de saison</a></li>
+            <li><a href="{{path('app_logout')}}" title="Logout">Log Out</a></li>
+        {%if is_granted('ROLE_ADMIN') %}
+            <li><a href="{{path('admin_index')}}" title="Administration">Administration</a></li>
+        {%endif %}
+            {% else %}
+                <li><a href="{{path('app_login')}}" title="LogIn">Log In</a></li>
+                <li><a href="{{path('app_register')}}" title="Register">Register</a></li>
+        {% endif %}
     </ul>
 </nav>
